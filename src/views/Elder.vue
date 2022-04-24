@@ -31,7 +31,7 @@
       <el-table-column prop="name" label="姓名" width="120"></el-table-column>
       <el-table-column prop="sex" label="性别" width="50"></el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
-      <el-table-column prop="id_number" label="身份证号" width="200"></el-table-column>
+      <el-table-column prop="idNumber" label="身份证号" width="200"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
@@ -74,7 +74,7 @@
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="身份证号">
-          <el-input v-model="form.id_number" autocomplete="off"></el-input>
+          <el-input v-model="form.idNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地址">
           <el-input v-model="form.address" autocomplete="off"></el-input>
@@ -97,7 +97,7 @@ export default {
       name: '王小虎',
       sex: '男',
       phone: '16666666666',
-      id_number: '320101199912311234',
+      idNumber: '320101199912311234',
       address: '上海市普陀区金沙江路 1518 弄'
     };
     return {
@@ -110,7 +110,7 @@ export default {
       searchData: "",
       name: "",
       sex: "",
-      id_number: "",
+      idNumber: "",
       phone: "",
       address: "",
       form: {},
@@ -130,7 +130,7 @@ export default {
           name: this.name,
           sex: this.sex,
           phone: this.phone,
-          id_number: this.id_number,
+          idNumber: this.idNumber,
           address: this.address
         }
       }).then(res => {
