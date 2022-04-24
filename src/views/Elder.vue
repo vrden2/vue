@@ -93,7 +93,7 @@ export default {
   name: "User",
   data() {
     const item = {
-      id: '1',
+      id: "1",
       name: '王小虎',
       sex: '男',
       phone: '16666666666',
@@ -102,11 +102,11 @@ export default {
     };
     return {
       // tableData: [],
-      tableData: Array(1).fill(item),
+      tableData: Array(25).fill(item),
       total: 0,
       pageNum: 1,
       pageSize: 10,
-      id: "",
+      id: "0",
       searchData: "",
       name: "",
       sex: "",
@@ -170,7 +170,7 @@ export default {
       this.dialogFormVisible = true
     },
     handleDelete(id) {
-      this.request.delete("/elder/del" + id).then(res => {
+      this.request.delete("/elder/del?id=" + id).then(res => {
         if(res.data) {
           this.$message.success("删除成功")
           this.load()
