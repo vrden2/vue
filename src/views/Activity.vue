@@ -2,7 +2,7 @@
   <div>
 <!--    活动模块-->
     <div>
-      <div style="margin-top: 30px;margin-bottom: 10px;margin-left: 10px">活动：共 {{actionTotal}} 条</div>
+      <div style="margin-top: 10px;margin-bottom: 10px;margin-left: 10px">活动：共 {{actionTotal}} 条</div>
       <div style="margin-top: 10px; margin-bottom: 10px">
         <el-input style="width: 200px" placeholder="输入关键词" suffix-icon="el-icon-search" v-model="actionSearchData"></el-input>
         <el-button style="margin-left: 5px" type="primary" @click="handleActionSearch">搜索</el-button>
