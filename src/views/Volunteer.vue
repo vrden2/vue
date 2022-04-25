@@ -33,7 +33,7 @@
       <el-table-column prop="sex" label="性别" width="50"></el-table-column>
       <el-table-column prop="isAdmin" label="管理员" width="60"></el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
-      <el-table-column prop="id_number" label="身份证号" width="220"></el-table-column>
+      <el-table-column prop="idNumber" label="身份证号" width="220"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
@@ -76,13 +76,13 @@
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="身份证号">
-          <el-input v-model="form.id_number" autocomplete="off"></el-input>
+          <el-input v-model="form.idNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地址">
           <el-input v-model="form.address" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="是否为管理员">
-          <el-switch v-model="form.isAdmin" active-value="1" inactive-value="0"></el-switch>
+          <el-switch v-model="form.isAdmin" active-value="是" inactive-value="否"></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -101,9 +101,9 @@ export default {
       id: '1',
       name: '王小虎',
       sex: '男',
-      isAdmin: 1,
+      isAdmin: "是",
       phone: '16666666666',
-      id_number: '320101199912311234',
+      idNumber: '320101199912311234',
       address: '上海市普陀区金沙江路 1518 弄'
     };
     return {
@@ -116,7 +116,7 @@ export default {
       id: "",
       name: "",
       sex: "",
-      id_number: "",
+      idNumber: "",
       phone: "",
       address: "",
       isAdmin: "",
@@ -137,13 +137,13 @@ export default {
           name: this.name,
           sex: this.sex,
           phone: this.phone,
-          id_number: this.id_number,
+          idNumber: this.idNumber,
           address: this.address,
           isAdmin: this.isAdmin
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data.records
+        this.tableData = res.data
         this.total = res.data.total
       })
     },
@@ -154,7 +154,7 @@ export default {
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data.records
+        this.tableData = res.data
         this.total = res.data.total
       })
     },
@@ -175,10 +175,11 @@ export default {
     },
     handleEdit(row) {
       this.form = Object.assign({},row)
+      console.log(this.form)
       this.dialogFormVisible = true
     },
     handleDelete(id) {
-      this.request.delete("/volunteer/del" + id).then(res => {
+      this.request.delete("/volunteer/del?id=" + id).then(res => {
         if(res.data) {
           this.$message.success("删除成功")
           this.load()
@@ -202,9 +203,7 @@ export default {
       })
     },
     reset(){
-      this.username = ""
-      this.email = ""
-      this.address = ""
+      this.searchData = ""
       this.load()
     },
     handleSizeChange(pageSize){
@@ -213,13 +212,6 @@ export default {
     },
     handleCurrentChange(pageNum){
       this.pageNum = pageNum
-      this.load()
-    },
-    handleExport() {
-      window.open("http://localhost:9090/user/export")
-    },
-    handleImportSuccess() {
-      this.$message.success("导入成功")
       this.load()
     }
   }

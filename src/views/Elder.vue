@@ -135,7 +135,7 @@ export default {
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data.records
+        this.tableData = res.data
         this.total = res.data.total
       })
     },
@@ -146,7 +146,7 @@ export default {
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data.records
+        this.tableData = res.data
         this.total = res.data.total
       })
     },
@@ -184,7 +184,7 @@ export default {
     },
     delBatch() {
       let ids = this.multipleSelection.map(v => v.id)
-      this.request.post("/elder/del/batch", ids).then(res => {
+      this.request.post("/elder/del/batch?id=", ids).then(res => {
         if(res.data) {
           this.$message.success("批量删除成功")
           this.load()
@@ -203,13 +203,6 @@ export default {
     },
     handleCurrentChange(pageNum){
       this.pageNum = pageNum
-      this.load()
-    },
-    handleExport() {
-      window.open("http://localhost:9090/user/export")
-    },
-    handleImportSuccess() {
-      this.$message.success("导入成功")
       this.load()
     }
   }

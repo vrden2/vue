@@ -1,21 +1,6 @@
 <template>
   <div>
-    <div>
-      <span>请输入用户ID：</span>
-      <el-input style="width: 200px" placeholder="输入老人ID" suffix-icon="el-icon-search" v-model="userId"></el-input>
-      <el-button type="primary" style="margin-left: 20px" @click="handleUserSearch">确定</el-button>
-    </div>
-
-    <div style="margin-top: 30px;margin-bottom: 10px;margin-left: 10px" v-show="isShow">用户信息</div>
-    <el-table :data="userData" border stripe v-show="isShow" style="width: 801px">
-      <el-table-column prop="id" label="ID" width="70"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-      <el-table-column prop="sex" label="性别" width="50"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="120"></el-table-column>
-      <el-table-column prop="id_number" label="身份证号" width="220"></el-table-column>
-      <el-table-column prop="address" label="地址" width="220"></el-table-column>
-    </el-table>
-    <div style="margin-top: 30px;margin-bottom: 10px;margin-left: 10px" v-show="isShow">文章：共 {{articleTotal}} 篇</div>
+    <div style="margin-bottom: 10px;margin-left: 10px" v-show="isShow">文章：共 {{articleTotal}} 篇</div>
     <div style="margin-top: 10px; margin-bottom: 10px" v-show="isShow">
       <el-input style="width: 200px" placeholder="信息" suffix-icon="el-icon-search" v-model="searchArticleData"></el-input>
       <el-button style="margin-left: 5px" type="primary" @click="handleArticleSearch">搜索</el-button>
@@ -40,7 +25,7 @@
       <el-table-column prop="visitedNumber" label="访问量" width="100"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="success" style="margin-left: 5px" icon="el-icon-edit" @click="handleEditAction(scope.row)">编辑</el-button>
+          <el-button type="success" style="margin-left: 5px" icon="el-icon-edit" @click="handleEditarticle(scope.row)">编辑</el-button>
           <el-popconfirm
               style="margin-left: 10px"
               confirm-button-text='确定'
@@ -65,14 +50,6 @@
 export default {
   name: "Article",
   data() {
-    const user = {
-      id: '1',
-      name: '王小虎',
-      sex: '男',
-      phone: '16666666666',
-      id_number: '320101199912311234',
-      address: '上海市普陀区金沙江路 1518 弄'
-    };
     const article = {
       id: '1',
       title: '这是标题',
@@ -81,18 +58,104 @@ export default {
       visitedNumber: 105641
     };
     return {
-      elderId: "",
       isShow: true,
-      // elderData: [],
-      elderData: Array(1).fill(user),
       articleTotal: 0,
       searchArticleData: "",
+      visitedNumber: 0,
       // articleDatas: [],
       articleDatas: Array(10).fill(article),
+      pageSize: 10,
     }
   },
+  created() {
+    this.articleLoad()
+  },
   methods: {
-
+    articleLoad() {
+      this.request.get("/article/page").then(res => {
+        console.log(res.data)
+        this.articleDatas = res.data
+        this.articleTotal = res.data.total
+      })
+    },
+    setBlank() {
+      this.textArea = ""
+    },
+    handleSizeChange(pageSize){
+      this.pageSize = pageSize
+      this.articleLoad()
+    },
+    handleCurrentChange(pageNum){
+      this.pageNum = pageNum
+      this.articleLoad()
+    },
+    handleArticleSearch() {
+      this.request.get("/activity/search", {
+        params: {
+          articleData: this.articleSearchData
+        }
+      }).then(res => {
+        console.log(res.data)
+        this.articleDatas = res.data
+        this.articleTotal = res.data.total
+      })
+    },
+    saveArticle() {
+      this.request.post("/activity/save", this.articleForm).then(res => {
+        if(res.data) {
+          this.$message.success("保存成功")
+          this.articleFormVisible = false
+          this.articleLoad()
+        } else {
+          this.$message.error("保存失败")
+        }
+      })
+    },
+    handleAddArticle(){
+      this.articleFormVisible = true
+      this.articleForm = {}
+    },
+    articleHandleClose(done) {
+      this.$confirm('确认保存？')
+          .then(_ => {
+            this.articleForm.mainText = this.textArea
+            this.articleTextDrawerShow = false
+            done();
+          })
+          .catch(_ => {});
+    },
+    handleArticleTextDrawerShow(text){
+      this.textArea = text
+      this.articleTextDrawerShow = true
+    },
+    handleEditarticle(row) {
+      this.articleForm = Object.assign({},row)
+      this.articleFormVisible = true
+    },
+    handleSelectionChange(val) {
+      this.articleMultipleSelection = val
+    },
+    handleDeleteArticle(id) {
+      this.request.delete("/activity/del" + id).then(res => {
+        if(res.data) {
+          this.$message.success("删除成功")
+          this.articleLoad()
+        } else {
+          this.$message.error("删除失败")
+        }
+      })
+    },
+    delarticleBatch() {
+      let ids = this.articleMultipleSelection.map(v => v.id)
+      this.request.post("/activity/del/batch", ids).then(res => {
+        if(res.data) {
+          this.$message.success("批量删除成功")
+          this.articleLoad()
+        } else {
+          this.$message.error("批量删除失败")
+        }
+      })
+    },
   }
 }
 </script>
