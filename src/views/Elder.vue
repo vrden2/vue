@@ -68,7 +68,9 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-input v-model="form.sex" autocomplete="off"></el-input>
+          <div style="margin-left: 20px">
+            女<el-switch v-model="form.sex" active-value="男" inactive-value="女" style="margin-left: 20px;margin-right: 20px"></el-switch>男
+          </div>
         </el-form-item>
         <el-form-item label="电话">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
