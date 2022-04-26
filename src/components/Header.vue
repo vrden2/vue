@@ -41,6 +41,7 @@ export default {
   },
   data() {
     return {
+      currentPathName:"首页",
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}
     }
   },
