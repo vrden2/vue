@@ -123,7 +123,7 @@ export default {
     actionLoad() {
       this.request.get("/activity/page").then(res => {
         console.log(res.data)
-        this.actionDatas = res.data
+        this.actionDatas = res.data.records
         this.actionTotal = res.data.total
       })
     },

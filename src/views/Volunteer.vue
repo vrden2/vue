@@ -143,7 +143,7 @@ export default {
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data
+        this.tableData = res.data.records
         this.total = res.data.total
       })
     },
@@ -193,7 +193,7 @@ export default {
     },
     delBatch() {
       let ids = this.multipleSelection.map(v => v.id)
-      this.request.post("/volunteer/del/batch", ids).then(res => {
+      this.request.post("/volunteer/delBatch?ids=", ids).then(res => {
         if(res.data) {
           this.$message.success("批量删除成功")
           this.load()

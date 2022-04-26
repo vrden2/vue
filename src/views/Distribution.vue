@@ -134,13 +134,13 @@ export default {
     loadVolunteer() {
       this.request.post("/volunteer/page", {
         params: {
-          PageNum: this.volunteerPageNum,
-          PageSize: this.volunteerPageSize,
+          pageNum: this.volunteerPageNum,
+          pageSize: this.volunteerPageSize,
           condition: this.searchVolunteer
         }}).then(res => {
         if (res) {
           console.log(res.data)
-          this.volunteerDatas = res.data
+          this.volunteerDatas = res.data.records
           this.volunteerTotal = res.data.total
         } else
           this.$message.error("加载志愿者信息失败")
@@ -150,8 +150,8 @@ export default {
       this.request.post("/distribution/page", {
         params: {
           id: volunteerId,
-          PageNum: this.elderPageNum,
-          PageSize: this.elderPageSize,
+          pageNum: this.elderPageNum,
+          pageSize: this.elderPageSize,
         }}).then(res => {
         if (res) {
           console.log(res.data)

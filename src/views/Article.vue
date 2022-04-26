@@ -74,7 +74,7 @@ export default {
     articleLoad() {
       this.request.get("/article/page").then(res => {
         console.log(res.data)
-        this.articleDatas = res.data
+        this.articleDatas = res.data.records
         this.articleTotal = res.data.total
       })
     },
