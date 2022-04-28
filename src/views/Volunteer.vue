@@ -26,7 +26,7 @@
 <!--      <el-button type="primary" icon="el-icon-bottom" style="margin-left: 10px" @click="handleExport">导出</el-button>-->
     </div>
 
-    <el-table :data="tableData" border stripe @selection-change="handleSelectionChange">
+    <el-table :data="tableData" border stripe @selection-change="handleSelectionChange" style="width: 1196px">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="id" label="ID" width="70"></el-table-column>
       <el-table-column prop="name" label="姓名" width="120"></el-table-column>
@@ -34,8 +34,8 @@
       <el-table-column prop="isAdmin" label="管理员" width="60"></el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
       <el-table-column prop="idNumber" label="身份证号" width="220"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
-      <el-table-column label="操作" width="250">
+      <el-table-column prop="address" label="地址" width="300"></el-table-column>
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="success" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
           <el-popconfirm
@@ -64,8 +64,8 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="志愿者信息" :visible.sync="dialogFormVisible" width="30%">
-      <el-form label-width="100px" size="small">
+    <el-dialog title="志愿者信息" :visible.sync="dialogFormVisible" width="400px">
+      <el-form label-width="80px" size="small">
         <el-form-item label="姓名">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -138,12 +138,6 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          name: this.name,
-          sex: this.sex,
-          phone: this.phone,
-          idNumber: this.idNumber,
-          address: this.address,
-          isAdmin: this.isAdmin
         }
       }).then(res => {
         console.log(res.data)
@@ -154,11 +148,13 @@ export default {
     handleSearch(){
       this.request.get("/volunteer/search", {
         params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
           searchData: this.searchData
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data
+        this.tableData = res.data.records
         this.total = res.data.total
       })
     },

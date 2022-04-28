@@ -4,7 +4,7 @@
     <div style="flex: 1; font-size: 20px;">
       <span :class="collapseBtnClass" style="cursor: pointer" @click="collapse"></span>
 
-      <el-breadcrumb separator="/" style="display: inline-block; margin-left: 1%">
+      <el-breadcrumb separator="/" style="display: inline-block; margin-left: 20px;">
         <el-breadcrumb-item :to="{ path: '/'}">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ currentPathName }}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -12,8 +12,7 @@
 
     <el-dropdown size="medium" style="text-align: right; cursor: pointer; margin-right: 10px">
       <div>
-        <img :src="user.avatarUrl" alt="" style="width: 30px; border-radius: 50%; position: relative; top: 10px; right: 5px">
-        <span>{{ user.nickname }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
+        <i class="el-icon-user"></i><span>{{ user.name }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
       </div>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
@@ -33,6 +32,7 @@ export default {
   },
   created() {
     this.currentPathName = localStorage.getItem("currentPathName")
+    this.juaew()
   },
   watch: {
     '$route': function () {
@@ -42,13 +42,18 @@ export default {
   data() {
     return {
       currentPathName:"首页",
-      user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}
+      user: sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {}
     }
   },
   methods: {
+    juaew() {
+      if (this.user == null) {
+        this.$router.push("/login")
+      }
+    },
     handleLogout() {
       this.$router.push("/login")
-      localStorage.removeItem("user")
+      sessionStorage.removeItem("user")
       this.$message.success("退出成功")
     }
   }

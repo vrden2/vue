@@ -7,6 +7,7 @@
     </div>
     <div style="margin-top: 10px; margin-bottom: 10px">
       <el-button type="primary" style="margin-left: 10px" icon="el-icon-circle-plus-outline" @click="handleAddArticle">新建</el-button>
+      <el-button type="warning" @click="reset">重置</el-button>
       <el-popconfirm
           style="margin-left: 10px"
           confirm-button-text='确定'
@@ -19,16 +20,15 @@
         <el-button type="danger" slot="reference" icon="el-icon-delete">批量删除</el-button>
       </el-popconfirm>
     </div>
-    <el-table :data="articleDatas" border stripe style="width: 1011px" @selection-change="handleArticleSelectionChange">
+    <el-table :data="articleDatas" border stripe style="width: 911px;" @selection-change="handleArticleSelectionChange">
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
       <el-table-column prop="title" label="标题" width="150"></el-table-column>
-      <el-table-column prop="author" label="作者" width="150"></el-table-column>
+      <el-table-column prop="writer" label="作者" width="150"></el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="160"></el-table-column>
-      <el-table-column prop="modifyTime" label="修改时间" width="160"></el-table-column>
-      <el-table-column prop="visitedNumber" label="访问量" width="100"></el-table-column>
+      <el-table-column prop="updateTime" label="修改时间" width="160"></el-table-column>
       <el-table-column label="操作">
-        <template slot-scope="scope">
+        <div slot-scope="scope" style="display: block">
           <el-button type="success" style="margin-left: 5px" icon="el-icon-edit" @click="handleEditArticle(scope.row)">编辑</el-button>
           <el-popconfirm
               style="margin-left: 10px"
@@ -41,7 +41,7 @@
           >
             <el-button type="danger" slot="reference" icon="el-icon-remove-outline">移除</el-button>
           </el-popconfirm>
-        </template>
+        </div>
       </el-table-column>
     </el-table>
     <div style="padding: 10px 0">
@@ -56,16 +56,16 @@
       </el-pagination>
     </div>
     <!--    新增弹窗-->
-    <el-dialog title="活动详情" :visible.sync="articleFormVisible" width="30%">
-      <el-form label-width="80px" size="small">
+    <el-dialog title="活动详情" :visible.sync="articleFormVisible" width="400px">
+      <el-form label-width="60px" size="small">
         <el-form-item label="标题">
           <el-input v-model="articleForm.title" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="作者">
-          <el-input v-model="articleForm.author" autocomplete="off"></el-input>
+          <el-input v-model="articleForm.writer" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item v-model="articleForm.mainText" autocomplete="off">
-          <el-button type="success" icon="el-icon-edit" @click="handleArticleTextDrawerShow(articleForm.mainText)">编辑正文</el-button>
+        <el-form-item v-model="articleForm.description" autocomplete="off">
+          <el-button type="success" icon="el-icon-edit" @click="handleArticleTextDrawerShow(articleForm.description)">编辑正文</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -113,8 +113,8 @@ export default {
       visitedNumber: 0,
       // articleDatas: [],
       articleDatas: Array(10).fill(article),
-      pageSize: 10,
       pageNum: 1,
+      pageSize: 10,
       articleFormVisible: false,
     }
   },
@@ -122,8 +122,16 @@ export default {
     this.articleLoad()
   },
   methods: {
+    reset(){
+      this.searchArticleData = ""
+      this.articleLoad()
+    },
     articleLoad() {
-      this.request.get("/article/page").then(res => {
+      this.request.get("/article/page",{
+        params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }}).then(res => {
         console.log(res.data)
         this.articleDatas = res.data.records
         this.articleTotal = res.data.total
@@ -143,11 +151,13 @@ export default {
     handleArticleSearch() {
       this.request.get("/article/search", {
         params: {
-          data: this.searchArticleData
+          articleData: this.searchArticleData,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
         }
       }).then(res => {
         console.log(res.data)
-        this.articleDatas = res.data
+        this.articleDatas = res.data.records
         this.articleTotal = res.data.total
       })
     },
@@ -169,7 +179,7 @@ export default {
     articleHandleClose(done) {
       this.$confirm('确认保存？')
           .then(_ => {
-            this.articleForm.mainText = this.textArea
+            this.articleForm.description = this.textArea
             this.articleTextDrawerShow = false
             done();
           })
@@ -187,7 +197,7 @@ export default {
       this.articleMultipleSelection = val
     },
     handleArticleDelete(id) {
-      this.request.delete("/article/del?id=" + id).then(res => {
+      this.request.get("/article/del?id=" + id).then(res => {
         if(res.data) {
           this.$message.success("删除成功")
           this.articleLoad()

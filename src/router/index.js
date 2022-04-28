@@ -8,7 +8,7 @@ const routes = [
     path: '/',
     name: '首页',
     component: () => import('../views/Manage.vue'),
-    redirect: "/home",
+    redirect: "/login",
     children: [
       {path: 'home', name: '首页', component: () => import('../views/Home.vue')},
       {path: 'elder', name: '用户管理', component: () => import('../views/Elder.vue')},

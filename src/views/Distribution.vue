@@ -5,6 +5,7 @@
       <span>查询：</span>
       <el-input style="width: 200px" placeholder="输入志愿者信息查询志愿者" suffix-icon="el-icon-search" v-model="searchVolunteer"></el-input>
       <el-button type="primary" style="margin-left: 20px" icon="el-icon-search" @click="handleVolunteerSearch">查询</el-button>
+      <el-button type="warning" @click="reset">重置</el-button>
     </div>
   </div>
     <el-table :data="volunteerDatas" border stripe style="width: 901px">
@@ -12,7 +13,7 @@
       <el-table-column prop="name" label="姓名" width="120"></el-table-column>
       <el-table-column prop="sex" label="性别" width="50"></el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
-      <el-table-column prop="id_number" label="身份证号" width="220"></el-table-column>
+      <el-table-column prop="idNumber" label="身份证号" width="220"></el-table-column>
       <el-table-column prop="address" label="地址" width="220"></el-table-column>
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -55,7 +56,7 @@
         <el-table-column prop="name" label="姓名" width="120"></el-table-column>
         <el-table-column prop="sex" label="性别" width="50"></el-table-column>
         <el-table-column prop="phone" label="电话" width="120"></el-table-column>
-        <el-table-column prop="id_number" label="身份证号" width="220"></el-table-column>
+        <el-table-column prop="idNumber" label="身份证号" width="220"></el-table-column>
         <el-table-column prop="address" label="地址" width="220"></el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
@@ -98,7 +99,7 @@ export default {
       sex: '男',
       isAdmin: '是',
       phone: '16666666666',
-      id_number: '320101199912311234',
+      idNumber: '320101199912311234',
       address: '上海市普陀区金沙江路 1518 弄'
     };
     const elder = {
@@ -106,7 +107,7 @@ export default {
       name: '王小虎',
       sex: '男',
       phone: '16666666666',
-      id_number: '320101199912311234',
+      idNumber: '320101199912311234',
       address: '上海市普陀区金沙江路 1518 弄'
     };
     return {
@@ -131,8 +132,12 @@ export default {
     this.loadVolunteer()
   },
   methods: {
+    reset(){
+      this.searchVolunteer = ""
+      this.loadVolunteer()
+    },
     loadVolunteer() {
-      this.request.post("/volunteer/page", {
+      this.request.get("/volunteer/page", {
         params: {
           pageNum: this.volunteerPageNum,
           pageSize: this.volunteerPageSize,
@@ -147,7 +152,7 @@ export default {
       })
     },
     loadElder(volunteerId) {
-      this.request.post("/distribution/page", {
+      this.request.post("/elder/distribution", {
         params: {
           id: volunteerId,
           pageNum: this.elderPageNum,
@@ -155,8 +160,8 @@ export default {
         }}).then(res => {
         if (res) {
           console.log(res.data)
-          this.volunteerDatas = res.data
-          this.volunteerTotal = res.data.total
+          this.elderDatas = res.data.records
+          this.elderTotal = res.data.total
           this.selectedVolunteer = volunteerId
           this.isShow = true
         } else
@@ -166,11 +171,13 @@ export default {
     handleVolunteerSearch() {
       this.request.post("/volunteer/search", {
         params: {
+          pageNum: this.volunteerPageNum,
+          pageSize: this.volunteerPageSize,
           condition: this.searchVolunteer
         }}).then(res => {
         if (res) {
           console.log(res.data)
-          this.volunteerData = res.data
+          this.volunteerDatas = res.data.records
           this.volunteerTotal = res.data.total
           // this.isShow = true
         } else
@@ -194,14 +201,15 @@ export default {
       this.load()
     },
     handleAddElderID() {
-      this.request.post("/distribution/add", {
+      this.request.get("/elder/add", {
         params: {
-          volunteerId: this.volunteerData.volunteerId,
+          volunteerId: this.selectedVolunteer,
           addElderID: this.addElderID
         }}).then(res => {
           if (res) {
             console.log(res.data)
             this.elderDatas = res.data.elderDatas
+            this.loadElder(this.selectedVolunteer)
           } else this.$message.error("未找到对应老人，请重新输入ID")
         })
     },
@@ -210,30 +218,30 @@ export default {
     },
     delBatch() {
       let ids = this.multipleSelection.map(v => v.id)
-      this.request.post("/distribution/del/batch", {
+      this.request.get("/elder/delBatch", {
         params: {
           ids: ids,
-          volunteerId: this.selectedVolunteer
+          // volunteerId: this.selectedVolunteer
         }
       }).then(res => {
         if(res.data) {
           this.$message.success("批量移除成功")
-          this.handleSearch()
+          this.loadElder()
         } else {
           this.$message.error("批量移除失败")
         }
       })
     },
     handleDeleteFromVolunteerHelpers(id) {
-      this.request.post("/distribution/del", {
+      this.request.get("/elder/del1", {
         params: {
           id: id,
-          volunteerId: this.selectedVolunteer
+          // volunteerId: this.selectedVolunteer
         }
       }).then(res => {
         if(res.data) {
           this.$message.success("移除成功")
-          this.handleSearch()
+          this.loadElder()
         } else {
           this.$message.error("移除失败")
         }

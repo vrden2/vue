@@ -6,6 +6,7 @@
       <div style="margin-top: 10px; margin-bottom: 10px">
         <el-input style="width: 200px" placeholder="输入关键词" suffix-icon="el-icon-search" v-model="actionSearchData"></el-input>
         <el-button style="margin-left: 5px" type="primary" @click="handleActionSearch">搜索</el-button>
+        <el-button type="warning" @click="reset">重置</el-button>
       </div>
       <div style="margin-top: 10px; margin-bottom: 10px">
         <el-button type="primary" style="margin-left: 10px" icon="el-icon-circle-plus-outline" @click="handleAddAction">新建</el-button>
@@ -25,11 +26,10 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="60"></el-table-column>
         <el-table-column prop="title" label="标题" width="150"></el-table-column>
-        <el-table-column prop="manager" label="发起人" width="120"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="120"></el-table-column>
-        <el-table-column prop="modifyTime" label="修改时间" width="120"></el-table-column>
-        <el-table-column prop="startTime" label="开始时间" width="120"></el-table-column>
-        <el-table-column prop="endTime" label="结束时间" width="120"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="150"></el-table-column>
+        <el-table-column prop="updateTime" label="修改时间" width="150"></el-table-column>
+        <el-table-column prop="startTime" label="开始时间" width="150"></el-table-column>
+        <el-table-column prop="endTime" label="结束时间" width="150"></el-table-column>
         <el-table-column label="操作" width="190">
           <template slot-scope="scope">
             <el-button type="success" style="margin-left: 5px" icon="el-icon-edit" @click="handleEditAction(scope.row)">编辑</el-button>
@@ -60,38 +60,23 @@
       </div>
     </div>
 <!--    新增弹窗-->
-    <el-dialog title="活动详情" :visible.sync="actionFormVisible" width="30%">
-      <el-form label-width="80px" size="small">
+    <el-dialog title="活动详情" :visible.sync="actionFormVisible" width="400px">
+      <el-form label-width="60px" size="small">
         <el-form-item label="标题">
-          <el-input v-model="actionForm.title" autocomplete="off"></el-input>
+          <el-input v-model="actionForm.title" autocomplete="off" style="width: 80%"></el-input>
         </el-form-item>
-        <el-form-item label="发起人">
-          <el-input v-model="actionForm.manager" autocomplete="off"></el-input>
+        <el-form-item label="日期">
+          <el-date-picker
+              style="width: 80%"
+              value-format="yyyy-MM-dd"
+              v-model="dateRange"
+              type="daterange"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="开始于">
-<!--          <el-input v-model="actionForm.startTime" autocomplete="off"></el-input>-->
-          <div class="block">
-            <el-date-picker
-                v-model="actionForm.startTime"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerStartOptions">
-            </el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item label="结束于">
-<!--          <el-input v-model="actionForm.endTime" autocomplete="off"></el-input>-->
-          <div class="block">
-            <el-date-picker
-                v-model="actionForm.endTime"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerEndOptions">
-            </el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item v-model="actionForm.mainText" autocomplete="off">
-          <el-button type="success" icon="el-icon-edit" @click="handleActionTextDrawerShow(actionForm.mainText)">编辑活动内容</el-button>
+        <el-form-item v-model="actionForm.description" autocomplete="off">
+          <el-button type="success" icon="el-icon-edit" @click="handleActionTextDrawerShow(actionForm.description)">编辑活动内容</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -124,79 +109,38 @@ export default {
       manager: 'admin',
       createTime: '202204241222',
       modifyTime: '202204241222',
-      mainText: '这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本'
+      description: '这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本'
     };
     return {
       // actionDatas: [],
       actionDatas: Array(2).fill(action),
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 10,
       actionTotal: 0,
       actionSearchData: "",
       actionFormVisible: false,
       actionTextDrawerShow: false,
       actionForm: [],
+      dateRange:[],
       textArea: "",
       actionMultipleSelection: "",
-      pickerStartOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            picker.$emit('pick', new Date());
-          }
-        }, {
-          text: '昨天',
-          onClick(picker) {
-            const date = new Date();
-            date.setTime(date.getTime() - 3600 * 1000 * 24);
-            picker.$emit('pick', date);
-          }
-        }, {
-          text: '一周前',
-          onClick(picker) {
-            const date = new Date();
-            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', date);
-          }
-        }]
-      },
-      pickerEndOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-        shortcuts: [{
-          text: '明天',
-          onClick(picker) {
-            date.setTime(date.getTime() + 3600 * 1000 * 24);
-            picker.$emit('pick', date);
-          }
-        }, {
-          text: '后天',
-          onClick(picker) {
-            const date = new Date();
-            date.setTime(date.getTime() + 3600 * 1000 * 48);
-            picker.$emit('pick', date);
-          }
-        }, {
-          text: '一周后',
-          onClick(picker) {
-            const date = new Date();
-            date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', date);
-          }
-        }]
-      },
     }
   },
   created() {
     this.actionLoad()
   },
   methods: {
+    reset(){
+      this.actionSearchData = ""
+      this.actionLoad()
+    },
     actionLoad() {
-      this.request.get("/activity/page").then(res => {
+      this.request.get("/activity/page", {
+        params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }
+          }).then(res => {
         console.log(res.data)
         this.actionDatas = res.data.records
         this.actionTotal = res.data.total
@@ -216,15 +160,19 @@ export default {
     handleActionSearch() {
       this.request.get("/activity/search", {
         params: {
-          actionData: this.actionSearchData
+          actionData: this.actionSearchData,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
         }
       }).then(res => {
         console.log(res.data)
-        this.actionDatas = res.data
+        this.actionDatas = res.data.records
         this.actionTotal = res.data.total
       })
     },
     saveAction() {
+      this.actionForm.startTime = this.dateRange[0]
+      this.actionForm.endTime = this.dateRange[1]
       this.request.post("/activity/save", this.actionForm).then(res => {
         if(res.data) {
           this.$message.success("保存成功")
@@ -242,7 +190,7 @@ export default {
     actionHandleClose(done) {
       this.$confirm('确认保存？')
           .then(_ => {
-            this.actionForm.mainText = this.textArea
+            this.actionForm.description = this.textArea
             this.actionTextDrawerShow = false
             done();
           })
@@ -260,7 +208,7 @@ export default {
       this.actionMultipleSelection = val
     },
     handleDeleteAction(id) {
-      this.request.delete("/activity/del" + id).then(res => {
+      this.request.delete("/activity/del?id=" + id).then(res => {
         if(res.data) {
           this.$message.success("删除成功")
           this.actionLoad()
@@ -271,7 +219,7 @@ export default {
     },
     delActionBatch() {
       let ids = this.actionMultipleSelection.map(v => v.id)
-      this.request.post("/activity/del/batch", ids).then(res => {
+      this.request.post("/activity/delBatch?ids=" + ids).then(res => {
         if(res.data) {
           this.$message.success("批量删除成功")
           this.actionLoad()

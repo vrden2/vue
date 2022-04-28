@@ -9,7 +9,7 @@ const request = axios.create({
 //拦截器
 request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8';
-    let user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null //获取浏览器DOM中user
+    let user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : null //获取浏览器DOM中user
     if (user) {
         config.headers['token'] = user.token;  // 在请求头中添加token
     }
@@ -32,7 +32,7 @@ request.interceptors.response.use(
             res = res ? JSON.parse(res) : res
         }
         //token验证不通过时给提示
-        if (res.code === '401') {
+        if (res.code === 0) {
             ElementUI.Message({
                 message:res.msg,
                 type: 'error'

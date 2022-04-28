@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div style="margin: 10px 0">
+    <div style="margin: 10px 0;width: 400px">
       <el-input style="width: 200px" placeholder="信息" suffix-icon="el-icon-search" v-model="searchData"></el-input>
       <el-button style="margin-left: 5px" type="primary" @click="handleSearch">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
     </div>
 
-    <div style="margin: 10px 0">
+    <div style="margin: 10px 0;width: 200px">
       <el-button type="primary" icon="el-icon-circle-plus-outline" @click="handleAdd">新增</el-button>
       <el-popconfirm
           style="margin-left: 10px"
@@ -25,14 +25,14 @@
 <!--      <el-button type="primary" icon="el-icon-bottom" style="margin-left: 10px" @click="handleExport">导出</el-button>-->
     </div>
 
-    <el-table :data="tableData" border stripe @selection-change="handleSelectionChange">
+    <el-table :data="tableData" border stripe @selection-change="handleSelectionChange" style="width: 1111px">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="id" label="ID" width="70"></el-table-column>
       <el-table-column prop="name" label="姓名" width="120"></el-table-column>
       <el-table-column prop="sex" label="性别" width="50"></el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
       <el-table-column prop="idNumber" label="身份证号" width="200"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table-column prop="address" label="地址" width="300"></el-table-column>
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <el-button type="success" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
@@ -62,7 +62,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="老人信息" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog title="老人信息" :visible.sync="dialogFormVisible" width="400px">
       <el-form label-width="80px" size="small">
         <el-form-item label="姓名">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -129,11 +129,6 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          name: this.name,
-          sex: this.sex,
-          phone: this.phone,
-          idNumber: this.idNumber,
-          address: this.address
         }
       }).then(res => {
         console.log(res.data)
@@ -144,11 +139,13 @@ export default {
     handleSearch(){
       this.request.get("/elder/search", {
         params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
           searchData: this.searchData
         }
       }).then(res => {
         console.log(res.data)
-        this.tableData = res.data
+        this.tableData = res.data.records
         this.total = res.data.total
       })
     },
